@@ -58,3 +58,25 @@ class TestAddNewPlace(TestCase):
         tokyo_from_database = Place.objects.get(name='Tokyo', visited=False) # get the place from the database
 
         self.assertEqual(tokyo_from_response, tokyo_from_database) # check that the place from the response is the same as the place from the database
+
+
+class TestVisitPlace(TestCase):
+
+    fixtures = ['test_places']
+
+    def test_visit_place(self):
+        visit_place_url = reverse('place_was_visited', args=(2, )) # args is a tuple of the arguments to pass to the view
+        response = self.client.post(visit_place_url, follow=True) # not sending data. stays in the url
+        
+        self.assertTemplateUsed(response, 'travel_wishlist/wishlist.html')
+
+        self.assertNotContains(response, 'New York') # check that New York is not in the response
+        self.assertContains(response, 'Tokyo') # check that Tokyo is in the response
+
+        new_york = Place.objects.get(pk=2)
+        self.assertTrue(new_york.visited) # check that New York is now visited
+
+    def test_visit_non_existent_place(self):
+        visit_non_existant_place_url = reverse('place_was_visited', args=(123456, ))
+        response = self.client.post(visit_non_existant_place_url, follow=True)
+        self.assertEqual(404, response.status_code)
