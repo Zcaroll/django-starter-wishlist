@@ -1,3 +1,5 @@
+{% extends 'travel_wishlist/base.html' %}
+{% block content %}
 <h2>Travel Wishlist</h2>
 
 <form method="POST" action="{% url 'place_list' %}"> <!--method is the type of request -->
@@ -9,11 +11,11 @@
 
 {% for place in places %}
 
-<div>
-    {{ place.name }}
+<div class="wishlist-place">
+    <span class="place-name">{{ place.name }}</span>
 
     <!-- Form to mark place as visited for button to function -->
-    <form method="POST" action="{% url 'place_was_visited' place.pk %}"> <!--place.pk is the primary key of the place that is being drawn-->
+    <form class="visited-form" method="POST" action="{% url 'place_was_visited' place.pk %}"> <!--place.pk is the primary key of the place that is being drawn-->
         {% csrf_token %}
         <button>Visited!</button>
     </form>
@@ -25,4 +27,4 @@
 
 {% endfor %}
 
-<a href="{% url 'places_visited' %}">Places you've visited</a>
+{% endblock %}
