@@ -2,6 +2,16 @@
 
 {% block content %}
 
-{{ place.name}}
+<h2>{{ place.name }}</h2>
+
+{% if place.visited %}
+    <p>You have visited {{ place.name }}.</p>
+{% else %}
+    <p>You have not visited {{ place.name }} yet.</p>
+
+    <form action="{% url 'place_was_visited' place.pk %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Mark as visited</button>
+{% endif %}
 
 {% endblock %}
