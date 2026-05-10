@@ -1,6 +1,6 @@
 <h2>Travel Wishlist</h2>
 
-<form method="POST" action="{% url 'place_list' %}">
+<form method="POST" action="{% url 'place_list' %}"> <!--method is the type of request -->
     {% csrf_token %}
     {{ new_place_form }}
     <button type="submit">Add</button>
@@ -11,6 +11,12 @@
 
 <div>
     {{ place.name }}
+
+    <!-- Form to mark place as visited for button to function -->
+    <form method="POST" action="{% url 'place_was_visited' place.pk %}"> <!--place.pk is the primary key of the place that is being drawn-->
+        {% csrf_token %}
+        <button>Visited!</button>
+    </form>
 </div>
 
 {% empty %}
