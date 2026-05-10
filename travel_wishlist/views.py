@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Place
-from .forms import NewPlaceForm
+from .forms import NewPlaceForm, TripReviewForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
+from django.contrib import messages
 
 # Create your views here.
 
@@ -53,7 +54,29 @@ def about(request):
 @login_required
 def place_details(request, place_pk):
     place = get_object_or_404(Place, pk=place_pk) # get the place from the database; if it doesn't exist, return 404 error
-    return render(request, 'travel_wishlist/place_details.html', {'place': place})
+    #does this place belong to the current user? 
+    if place.user != request.user: 
+        return HttpResponseForbidden() # return 403 error if the place does not belong to the current user
+    # is this a GET or a POST request?
+    if request.method == 'POST':
+        form = TripReviewForm(request.POST, request.FILES, instance=place) # create a new trip review form object with the data from the request
+        if form.is_valid(): # validate the form against database constraints
+            form.save() # save the changes to the database
+            messages.info(request, 'Trip information updated.') # display a message to the user that the trip information was updated
+
+        else: 
+            messages.error(request, 'forms.error') # temp, correct later
+
+        return redirect('place_details', place_pk=place_pk) # redirect to the same page to show the updated information
+    
+    else: # GET request
+        if place.visited:
+            review_form = TripReviewForm(instance=place) 
+            return render(request, 'travel_wishlist/place_details.html', {'place': place, 'review_form': review_form})
+        else:
+            return render(request, 'travel_wishlist/place_details.html', {'place': place})
+
+
 
 @login_required
 # allows user to delete a place from the database
