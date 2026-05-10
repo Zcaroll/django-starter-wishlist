@@ -1,5 +1,5 @@
 {% extends 'travel_wishlist/base.html' %}
-
+{% load static %}
 {% block content %}
 
 <h2>{{ place.name }}</h2>
@@ -12,10 +12,14 @@
     <form action="{% url 'place_was_visited' place.pk %}" method="POST">
         {% csrf_token %}
         <button type="submit">Mark as visited</button>
+    </form>
 {% endif %}
 
 <form action="{% url 'delete_place' place.pk %}" method="POST">
     {% csrf_token %}
     <button type="submit" class="delete">Delete</button>
+</form>
+
+<script src="{% static 'js/confirm_delete.js' %}"></script> <!-- link to the JavaScript file that contains the confirmDelete function -->
 
 {% endblock %}
